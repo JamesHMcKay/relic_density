@@ -1,0 +1,123 @@
+#include <vector>
+#include <cmath>
+#include <sstream>
+#include <string>
+#include <iostream>
+
+#include <boost/math/special_functions/bessel.hpp>
+#include <boost/math/special_functions/bessel_prime.hpp>
+#include <fstream>
+
+#include "cross_section.hpp"
+#include "interp.hpp"
+#include "figures.hpp"
+
+using namespace std;
+
+
+
+void Figures::plot_thermal_av()
+{
+//Cross_section cross_section(m_s);
+//plot integrand as a function of s
+ofstream myfile_integrand;
+myfile_integrand.open ("../Figures/data/thermal_av.txt");
+//double m_t=173;
+double lower=4*pow(m_s,2);
+double upper=1e15;//pow(1000,2)*1e40;
+double T=0;
+for (int i=0;i<100;i++)
+{
+//p=(log10(upper)-log10(lower))/400*float(i)+log10(lower);
+//s=pow(10,p);
+//s=(float(i)/400)*200+1;
+//cout << "s = " << s << endl;
+//T=(log10(upper)-log10(lower))*float(i)/400+log10(lower);
+
+T=(float(i)/100)*1+0.05;
+myfile_integrand << T << " " << cross_section.calc_cross_section(T) << endl;
+}
+myfile_integrand.close();
+
+system("python ../Figures/Figure_thermal_av.py");
+
+}
+
+void Figures::plot_sigma_v(double T)
+{
+//Cross_section cross_section(m_s);
+//plot integrand as a function of s
+ofstream myfile_integrand;
+myfile_integrand.open ("../Figures/data/sigma_v.txt");
+//double m_t=173;
+double lower=4*pow(m_s,2);
+double upper=1e15;//pow(1000,2)*1e40;
+double s,p;
+
+cs_func func(T,m_s);
+
+for (int i=0;i<400;i++)
+{
+p=(log10(upper)-log10(lower))/400*float(i);
+s=pow(10,p)+lower;
+myfile_integrand << s << " " << cross_section.cs_integral(s,T)<<" "<< func(s) << endl;
+}
+myfile_integrand.close();
+
+system("python ../Figures/Figure_sigma_v.py");
+
+}
+
+
+void Figures::plot_Z()
+{
+ofstream myfile_integrand;
+myfile_integrand.open ("../Figures/data/Z.txt");
+double x;
+//double m_t=173;
+for (int i=0;i<100;i++)
+{
+x=(float(i)/100)*10;
+
+myfile_integrand << pow(10,x) << " " << relic_density.Z(pow(10,x)) << endl;
+cout << pow(10,x) << " " << relic_density.Z(pow(10,x)) << endl;
+}
+myfile_integrand.close();
+system("python ../Figures/Figure_Z.py");
+}
+
+void Figures::gamma_h()
+{
+std::vector<double> x  ={90,100,110,120,130,140,150,180,200,250,300,400,500,600,800,1000};
+std::vector<double> y  ={2.2e-3,2.46e-3,2.82e-3,3.47e-3,4.87e-3,8.12e-3,1.73e-2,6.31e-1,1.43,4.04,8.43,29.2,68,123,304,647};
+
+Linear_interp myfunc(x,y);
+Poly_interp myfunc_poly(x,y,4);
+double m_h=444,gamma,gamma_2;
+
+gamma=myfunc.interp(m_h);
+gamma_2=myfunc_poly.interp(m_h);
+cout<< "linear: " <<gamma << endl;
+cout<< "polynomial: " <<gamma_2 << endl;
+
+
+ofstream myfile_linear;
+ofstream myfile_cubic;
+myfile_linear.open ("../Figures/data/interp_linear.txt");
+myfile_cubic.open ("../Figures/data/interp_cubic.txt");
+
+
+for (int i=1;i<400;i++)
+{
+m_h=float(i)*(990-100)/400+90;
+
+myfile_linear << m_h << " " << myfunc.interp(m_h) << endl;
+myfile_cubic  << m_h << " " << myfunc_poly.interp(m_h) << endl;
+
+}
+
+myfile_linear.close();
+myfile_cubic.close();
+
+}
+

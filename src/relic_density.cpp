@@ -124,7 +124,26 @@ double Relic_density::calc_cross_section(double T)
   }
    cout << "integrating from s to " << ul << "for T = " << T << endl;
   
-  return qtrap(func, s,ul,1e-4);
+  double result;
+  
+  ul=112617;
+  
+  if (s<2*pow(Mh,2))  // split integral into two parts, one around the Higgs resonance and one for the tail
+  {
+  double mid_pt=2*pow(Mh,2);
+  cout << " (s, mid) = " << s << " " << mid_pt << endl;
+  
+  double int_lower=qtrap(func,s,mid_pt,1e-4);
+  double int_upper=qtrap(func,mid_pt,ul,1e-4);
+  result=int_lower+int_upper;
+  }
+  else
+  {
+  result=qtrap(func,s,ul,1e-4);
+  }
+  
+  
+  return result;
   }
 }
 

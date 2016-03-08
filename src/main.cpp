@@ -78,19 +78,22 @@ double s=4*pow(m_s,2), T_=0.0001;
 
 //cout << "Generating figures" << endl;
 
-//Figures figures(cross_section, relic_density);
+Figures figures(cross_section, relic_density);
 //figures.plot_Z();
 
 //figures.plot_thermal_av();
 
 //cout<< "thermal average is = " << cross_section.Z(10000000000) << endl;
 
-//figures.plot_sigma_v(5.65);
+figures.plot_sigma_v(3);
+
+cout<< "integral is (thermal av) = " << relic_density.calc_cross_section(3) << endl;
+
 //figures.plot_Z();
 //
-double Y=relic_density.Y_today(relic_density.x_f());//cross_section.x_f());
-double rho_crit=1.05375e-5;// 3*(pow(H_0,2))/(8*Pi*G);  units: h^2 GeV /( c^2 cm^3)
-double s_0=2890;//(2*pow(Pi,2)/45)*g*pow(T,3);
-cout << "mass fraction = " <<  Y*m_s*s_0/rho_crit << endl;
+//double Y=relic_density.Y_today(relic_density.x_f());//cross_section.x_f());
+//double rho_crit=1.05375e-5;// 3*(pow(H_0,2))/(8*Pi*G);  units: h^2 GeV /( c^2 cm^3)
+//double s_0=2890;//(2*pow(Pi,2)/45)*g*pow(T,3);
+//cout << "mass fraction = " <<  Y*m_s*s_0/rho_crit << endl;
 
 }

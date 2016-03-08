@@ -66,9 +66,9 @@ for (int i=0;i<400;i++)
 {
 p=(log10(upper)-log10(lower))/400*float(i);
 s=pow(10,p)+lower;
-//myfile_integrand << s << " " << cross_section.cs_integral(s,T)<<" "<< func(s) << endl;
+myfile_integrand << s << " " << cross_section.cs_integral(s,T)<<" "<< func(s) << endl;
 
-myfile_integrand << s << " " << cross_section.sigma_v(s) <<" "<< cross_section.sigma_v(s) << endl;
+//myfile_integrand << s << " " << cross_section.sigma_v(s) <<" "<< cross_section.sigma_v(s) << endl;
 }
 myfile_integrand.close();
 

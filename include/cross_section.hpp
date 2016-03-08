@@ -35,14 +35,10 @@ class Cross_section
       v_0=246;
       Mh=125.66;
    } //constructor
-
-  
-  double calc_cross_section(double T);
   
   double gamma_h(double x);
   
   double Dh2(double s);
-  
   
   double sigma_v_VV(double s);
   
@@ -51,33 +47,37 @@ class Cross_section
   double sigma_v_hh(double s);
   
   double cs_integral(double s, double T);
-//
-//  double integrator(double lower, double upper, double T); // use logarithmic spacing
-//  double integrator_2(double lower, double upper, double T); // linear spacing
 
   double sigma_v(double s);
   
   double bessel_k_asymtotic(int v, double z)
   { // approximation for asymptotic Bessel function from http://userpages.umbc.edu/~dfrey1/ench630/modbes.pdf
    double mu=4*pow(v,2);
+   double result;
+   if (z>200)
+   {
     
-   double result = pow(Pi/(2*z),0.5)*exp(-z) * ( 1 + (mu-1)/( float(8) * z) + (mu-1)*(mu-9)/ ( 2 * pow( 8*z, 2 ) ) + (mu-1)*(mu-9)*(mu-25)/ ( 3*2*pow(8*z,3) ) );
-  
+   result = pow(Pi/(2*z),0.5)*exp(-z) * ( 1 + (mu-1)/( float(8) * z) + (mu-1)*(mu-9)/ ( 2 * pow( 8*z, 2 ) ) + (mu-1)*(mu-9)*(mu-25)/ ( 3*2*pow(8*z,3) ) );
+   }
+   else
+   {
+   result = boost::math::cyl_bessel_k(v,z);
+   }
+   
    return result;
   };
   
   
-    double log_bessel_k_asymtotic(int v, double z)
+  double log_bessel_k_asymtotic(int v, double z)
   {
-  
-   if (z>200)
-   {
-   return 0.5*log(Pi/(2*z))-z;
-   }
-   else
-   {
-   return log(boost::math::cyl_bessel_k(v,z));
-   }
+    if (z>200)
+    {
+    return 0.5*log(Pi/(2*z))-z;
+    }
+    else
+    {
+    return log(boost::math::cyl_bessel_k(v,z));
+    }
   };
   
 };
@@ -103,23 +103,23 @@ class Relic_density
   private:
   double Mh;
 
+  int make_interp;
   double lambda_hs,v_0;
   double Pi=3.14;
   double M_Z=91, M_W=80 , alpha_s=0.1184, mt=173;
   public:
   double m_s;
-  Relic_density (){}  // defualt constructor
+  std::vector<double> T_m,thermal_av_m;
+  Relic_density (){make_interp=0;}  // defualt constructor
   Relic_density(double Ms)
   {
       m_s=Ms;
       lambda_hs=0.1;
       v_0=246;
       Mh=125.66;
+      make_interp=0;
    } //constructor
-
-
-
-  double Z(double x);
+//  double Z(double x);
   
   double Yeq(double x);
   
@@ -133,22 +133,50 @@ class Relic_density
   
   double A(double x_f);
   
-  double integrator_A(double lower, double upper);
+  double calc_cross_section(double T);
   
-  double integrator_A_2(double lower, double upper);
-  
-  double calc_cross_section(double T)
-  {
-  double s=4*pow(m_s,2);
+  void thermal_average_make_interp(double T_lower, double T_upper,int pts);
 
-  cs_func func(T,m_s);
-
-  return qtrap(func, s,1e6,1e-2);
-
-  
-  };
 
 };
+
+
+struct Z_func {
+
+Z_func(double Ms) : Ms(Ms) {use_interp=0;}
+
+Z_func(double Ms ,std::vector<double> T,std::vector<double> thermal_av) : Ms(Ms)
+,T_m(T), thermal_av_m(thermal_av) {use_interp=1;}
+
+double operator()(double x) {
+
+double M_pl=1.2e19;
+double g_eff=10,cs;
+
+
+if (use_interp==1)
+{
+Poly_interp myfunc(T_m,thermal_av_m,4);
+cs = myfunc.interp(Ms/x);
+}
+else
+{
+Relic_density rd(Ms);
+cs=rd.calc_cross_section(Ms/x);
+}
+
+double Pi=3.14;
+return pow(Pi/float(45),0.5)*((Ms*M_pl)/pow(x,2)) * (pow(g_eff,0.5))*cs;
+
+}//cs_integral(x,T);}
+
+private:
+double T, Ms;
+int use_interp;
+std::vector<double> T_m, thermal_av_m;
+};
+
+
 
 
 

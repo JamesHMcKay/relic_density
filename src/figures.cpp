@@ -19,23 +19,29 @@ using namespace std;
 void Figures::plot_thermal_av()
 {
 //Cross_section cross_section(m_s);
+Relic_density relic_density(m_s);
 //plot integrand as a function of s
 ofstream myfile_integrand;
 myfile_integrand.open ("../Figures/data/thermal_av.txt");
 //double m_t=173;
-double lower=4*pow(m_s,2);
-double upper=1e15;//pow(1000,2)*1e40;
-double T=0;
-for (int i=0;i<100;i++)
-{
-//p=(log10(upper)-log10(lower))/400*float(i)+log10(lower);
-//s=pow(10,p);
-//s=(float(i)/400)*200+1;
-//cout << "s = " << s << endl;
-//T=(log10(upper)-log10(lower))*float(i)/400+log10(lower);
+//double lower=4*pow(m_s,2);
+//double upper=1e15;//pow(1000,2)*1e40;
 
-T=(float(i)/100)*1+0.05;
-myfile_integrand << T << " " << cross_section.calc_cross_section(T) << endl;
+double lower = 0.5;
+double upper = 2;
+
+
+relic_density.thermal_average_make_interp(lower*0.9,upper*1.1,5);
+
+Relic_density relic_density2(m_s);
+
+cout << "test value = " << relic_density.calc_cross_section(lower) << endl;
+
+double T=0;
+for (int i=0;i<10;i++)
+{
+T=(float(i)/10)*(upper-lower)+lower;
+myfile_integrand << T << " " << relic_density.calc_cross_section(T) << " " << relic_density2.calc_cross_section(T) << endl;
 }
 myfile_integrand.close();
 
@@ -60,7 +66,9 @@ for (int i=0;i<400;i++)
 {
 p=(log10(upper)-log10(lower))/400*float(i);
 s=pow(10,p)+lower;
-myfile_integrand << s << " " << cross_section.cs_integral(s,T)<<" "<< func(s) << endl;
+//myfile_integrand << s << " " << cross_section.cs_integral(s,T)<<" "<< func(s) << endl;
+
+myfile_integrand << s << " " << cross_section.sigma_v(s) <<" "<< cross_section.sigma_v(s) << endl;
 }
 myfile_integrand.close();
 
@@ -73,14 +81,29 @@ void Figures::plot_Z()
 {
 ofstream myfile_integrand;
 myfile_integrand.open ("../Figures/data/Z.txt");
+Z_func func_z(m_s);
+
+double x_upper=1e3, x_lower=20;
+double T_lower=m_s/x_upper,T_upper=m_s/x_lower;
+
+
+Relic_density rd(m_s);
+
+
+rd.thermal_average_make_interp(T_lower,T_upper,4);
+
+Z_func func_z2(m_s, rd.T_m, rd.thermal_av_m);
+
+
+
 double x;
 //double m_t=173;
 for (int i=0;i<100;i++)
 {
-x=(float(i)/100)*10;
+x=(x_upper-x_lower)*(float(i)/float(100))+x_lower;
 
-myfile_integrand << pow(10,x) << " " << relic_density.Z(pow(10,x)) << endl;
-cout << pow(10,x) << " " << relic_density.Z(pow(10,x)) << endl;
+myfile_integrand << x<< " " << func_z(x) << " " << func_z2(x) << endl;
+//cout << pow(10,x) << " " <<func_z(pow(10,x)) << endl;
 }
 myfile_integrand.close();
 system("python ../Figures/Figure_Z.py");

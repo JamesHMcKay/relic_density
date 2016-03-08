@@ -86,6 +86,4 @@ cout<< "too many steps " << endl;//throw("Too many steps in routine qtrap");
 
 
 
-
-
 #endif

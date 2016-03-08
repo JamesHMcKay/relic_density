@@ -15,12 +15,12 @@ using namespace std;
 
 
 
-double Relic_density::Z(double x)
-{
-double M_pl=1e19;
-double g_eff=100;
-return pow(Pi/float(45),0.5)*((m_s*M_pl)/pow(x,2)) * (pow(g_eff,0.5))*(calc_cross_section(m_s/x));
-}
+//double Relic_density::Z(double x)
+//{
+//double M_pl=1e19;
+//double g_eff=100;
+//return pow(Pi/float(45),0.5)*((m_s*M_pl)/pow(x,2)) * (pow(g_eff,0.5))*(calc_cross_section(m_s/x));
+//}
 
 double Relic_density::Yeq(double x)
 {
@@ -46,13 +46,15 @@ double Relic_density::x_f()
 
 double deltaf=0.618;
 double x_star=0.1;
+Z_func func(m_s);
+
+
 
 for (int i=0;i<10;i++)
 {
-x_star=log( (deltaf*(2+deltaf)/(1+deltaf)) * (  Z(x_star)* pow(hat(Yeq(x_star),x_star),2) )/ (hat(Yeq(x_star),x_star) -hat(Yeq(x_star)+dYeq(x_star),x_star) ));
-
-cout<< "x* is = " << x_star << endl;
-cout<< "corresponing to T = " << m_s/x_star << endl;
+x_star=log( (deltaf*(2+deltaf)/(1+deltaf)) * (  func(x_star)* pow(hat(Yeq(x_star),x_star),2) )/ (hat(Yeq(x_star),x_star) -hat(Yeq(x_star)+dYeq(x_star),x_star) ));
+//cout<< "x* is = " << x_star << endl;
+//cout<< "corresponing to T = " << m_s/x_star << endl;
 }
 
 cout<< "x* is = " << x_star << endl;
@@ -77,147 +79,73 @@ return result;
 
 double Relic_density::A(double x_f)
 {
-
-double integrand=1;
-double p=0,s;
-double lower_cutoff=x_f;
-while (integrand>0)
-{
-p=p+1;
-s=pow(10,p)+lower_cutoff;
-//cout<< "s = " << s << endl;
-integrand=Z(s);
-
-cout << "Z = " << integrand << "p= " << p << endl;
-}
-cout << "upper limit set = " << s << endl;
-
-return integrator_A(600,1e12)+integrator_A_2(x_f,600);
-
-}
-
-
-
-double Relic_density::integrator_A(double lower, double upper)
-{
-    double fa,fb,l=0,h,l_old=0;
-    double e=1;
-    int it;
-    it=0;
-    double a=lower,b=upper;
-    fa=Z(lower);
-    fb=Z(upper);
- //   cout << "fa = " << fa << endl;
-  //  cout << "fb = " << fb << endl;
-    h=(b-a)/2;
-    l=(h/2)*(fa+fb);
-    //printf ("First estimate is %f \n",l);
-    //double midpoint=(a+b)/2;
-    int n;
-    n=1;
-    int pts;
-    pts=100;
-    int s;
-    double c,c_prev;
-    s=1;
+  double x_upper=1e5, x_lower=x_f;
+  double T_lower=m_s/x_upper,T_upper=m_s/x_lower;
   
-    while(e>0.3)
-    {
-        l_old=l;
-        
-       // printf ("Iteration number %i \n",it);
-
-        //l=l/h;
-        //h=(b-a)/(pts-1); // h is the length of each section in the integration
-        //l=l*h;
-        l=0;
-        c_prev=log10(a);
-        for (int m=1; m<2*s+1; m +=2)
-        {
-            c=m*(log10(b)-log10(a))/(2*s)+log10(a);
-            h=pow(10,c)-pow(10,c_prev);
-            l=l+h*Z(pow(10,c));
-            c_prev=c;
-          
-            //cout<< "sampling at " << pow(10,c) << " obtained value = " << cs_integral(pow(10,c),T) << " h = " << h << endl;
-          
-
-        }
-      //  printf ("updated value of integral %f \n",l);
-        cout << "updated value of integral = " << l << "prev  = " << l_old << endl;
-        pts=((pts-2)*2)+pts;
-        n=n+1;
-        s=pow(2,n-1);
-        pts=2*s+1;
-       // printf ("number of points %i \n",2*s+1);
-        e=abs((l-l_old)/l);
-        it=it+1;
-    }  // set the desired accuracy here <<<<<<<<<<<<<
-    
-    
-    
-    return l;
-}
-
-
-double Relic_density::integrator_A_2(double lower, double upper)
-{
-    double fa,fb,l=0,h,l_old=0;
-    double e=1;
-    int it;
-    it=0;
-    double a=lower,b=upper;
-    fa=Z(lower);
-    fb=Z(upper);
- //   cout << "fa = " << fa << endl;
-  //  cout << "fb = " << fb << endl;
-    h=(b-a)/2;
-    l=(h/2)*(fa+fb);
-    //printf ("First estimate is %f \n",l);
-    //double midpoint=(a+b)/2;
-    int n;
-    n=1;
-    int pts;
-    pts=100;
-    int s;
-    double c,c_prev;
-    s=1;
   
-    while(e>0.1)
-    {
-        l_old=l;
-        
-       // printf ("Iteration number %i \n",it);
+  thermal_average_make_interp(T_lower*0.9,T_upper*1.1,5);
 
-        //l=l/h;
-        //h=(b-a)/(pts-1); // h is the length of each section in the integration
-        //l=l*h;
-        l=0;
-        c_prev=(a);
-        for (int m=1; m<2*s+1; m +=2)
-        {
-            c=m*((b)-(a))/(2*s)+(a);
-            h=c-c_prev;//pow(10,c)-pow(10,c_prev);
-            l=l+h*Z(c);
-            c_prev=c;
-          
-            //cout<< "sampling at " << pow(10,c) << " obtained value = " << cs_integral(pow(10,c),T) << " h = " << h << endl;
-          
+  Z_func func(m_s,T_m,thermal_av_m);
+  
+  double I=qtrap(func, x_lower,x_upper,1e-3);
+  
+  return I;
 
-        }
-      //  printf ("updated value of integral %f \n",l);
-        cout << "updated value of integral = " << l << "prev  = " << l_old << endl;
-        pts=((pts-2)*2)+pts;
-        n=n+1;
-        s=pow(2,n-1);
-        pts=2*s+1;
-       // printf ("number of points %i \n",2*s+1);
-        e=abs((l-l_old)/l);
-        it=it+1;
-    }  // set the desired accuracy here <<<<<<<<<<<<<
-    
-    
-    
-    return l;
+//Z_func func(m_s);
+//
+//return x_f*func(x_f);
+
 }
+
+
+double Relic_density::calc_cross_section(double T)
+{
+  if (make_interp==1)
+  {
+  
+  Poly_interp myfunc(T_m,thermal_av_m,4);
+
+  return myfunc.interp(T);
+  }
+  else
+  {
+
+  double s=4*pow(m_s,2)+1;
+  cs_func func(T,m_s);
+  double ul=1e8;
+
+// first need to determine appropriate upper limit for integration range, such that function is non-zero there
+  if (func(s)==0){ return 0;}
+  
+  while (func(ul)==0)
+  {
+  ul=(ul-s)/2+s;
+  //cout << "ul = " << ul << " f = " << func(ul) << endl;
+  }
+   cout << "integrating from s to " << ul << "for T = " << T << endl;
+  
+  return qtrap(func, s,ul,1e-4);
+  }
+}
+
+
+void Relic_density::thermal_average_make_interp(double T_lower, double T_upper,int pts)
+{
+  std::vector<double> T(pts);
+  std::vector<double> thermal_av(pts);
+  double step=(T_upper-T_lower)/float(pts);
+  T[0]=T_lower;
+  for (int n=0;n<pts;n++)
+  {
+  thermal_av[n]=calc_cross_section(T[n]);
+  T[n+1]=T[n]+step;
+  cout << "T = " << T[n] << "thermal av = " << thermal_av[n] << endl;
+
+  }
+  
+  T_m=T;
+  thermal_av_m=thermal_av;
+  make_interp=1;
+}
+
 

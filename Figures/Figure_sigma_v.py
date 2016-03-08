@@ -12,19 +12,31 @@ plt.figure()
 
 
 
-A=np.genfromtxt('../Figures/data/sigma_v.txt',usecols=[0,1])
+A=np.genfromtxt('../Figures/data/sigma_v.txt',usecols=[0,1,2])
 x=A[:,0]
 y=A[:,1]
+y2=A[:,2]
 
 plt.plot(x,y)
+plt.plot(x,y2)
 
 
 #xlabel(r"Boost velocity (km s$^{-1}$)",fontsize=14)
 #ylabel(r"$\chi^2_b/N_b$ in direction of minimum $\chi^2_a$",fontsize=14)
-plt.xlim([min(x),1e5])
-#plt.ylim([1e-20,1e-9])
 
-plt.xscale('log')
+ul=1e5;
+
+fit=interpolate.interp1d(x,y,kind='linear')
+
+
+plt.xlim([min(x),ul])
+plt.ylim([fit(ul)/10,max(y)])
+
+plt.xlabel("$s$",fontsize=18)
+plt.ylabel("$\sigma v_{rel}$",fontsize=18)
+
+
+#plt.xscale('log')
 plt.yscale('log')
 
 

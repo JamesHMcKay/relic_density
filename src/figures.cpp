@@ -19,7 +19,7 @@ using namespace std;
 void Figures::plot_thermal_av()
 {
 //Cross_section cross_section(m_s);
-Relic_density relic_density(m_s);
+Relic_density relic_density(m_s,lambda_hs);
 //plot integrand as a function of s
 ofstream myfile_integrand;
 myfile_integrand.open ("../Figures/data/thermal_av.txt");
@@ -33,7 +33,7 @@ double upper = 2;
 
 relic_density.thermal_average_make_interp(lower*0.9,upper*1.1,5);
 
-Relic_density relic_density2(m_s);
+Relic_density relic_density2(m_s,lambda_hs);
 
 cout << "test value = " << relic_density.calc_cross_section(lower) << endl;
 
@@ -60,7 +60,7 @@ double lower=4*pow(m_s,2);
 double upper=1e15;//pow(1000,2)*1e40;
 double s,p;
 
-cs_func func(T,m_s);
+cs_func func(T,m_s,lambda_hs);
 
 for (int i=0;i<400;i++)
 {
@@ -81,18 +81,18 @@ void Figures::plot_Z()
 {
 ofstream myfile_integrand;
 myfile_integrand.open ("../Figures/data/Z.txt");
-Z_func func_z(m_s);
+Z_func func_z(m_s,lambda_hs);
 
 double x_upper=1e3, x_lower=20;
 double T_lower=m_s/x_upper,T_upper=m_s/x_lower;
 
 
-Relic_density rd(m_s);
+Relic_density rd(m_s,lambda_hs);
 
 
 rd.thermal_average_make_interp(T_lower,T_upper,4);
 
-Z_func func_z2(m_s, rd.T_m, rd.thermal_av_m);
+Z_func func_z2(m_s,lambda_hs, rd.T_m, rd.thermal_av_m);
 
 
 

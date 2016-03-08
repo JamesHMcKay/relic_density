@@ -45,14 +45,17 @@ double Relic_density::x_f()
 // calculate x value of free-out
 
 double deltaf=0.618;
-double x_star=0.1;
-Z_func func(m_s);
+double x_star=15,x_prev=0;
+Z_func func(m_s,lambda_hs);
 
 
 
 for (int i=0;i<10;i++)
+
+while (abs(x_star-x_prev)>0.1)
 {
 x_star=log( (deltaf*(2+deltaf)/(1+deltaf)) * (  func(x_star)* pow(hat(Yeq(x_star),x_star),2) )/ (hat(Yeq(x_star),x_star) -hat(Yeq(x_star)+dYeq(x_star),x_star) ));
+x_prev=x_star;
 //cout<< "x* is = " << x_star << endl;
 //cout<< "corresponing to T = " << m_s/x_star << endl;
 }
@@ -85,7 +88,7 @@ double Relic_density::A(double x_f)
   
   thermal_average_make_interp(T_lower*0.9,T_upper*1.1,5);
 
-  Z_func func(m_s,T_m,thermal_av_m);
+  Z_func func(m_s,lambda_hs,T_m,thermal_av_m);
   
   double I=qtrap(func, x_lower,x_upper,1e-3);
   
@@ -109,39 +112,123 @@ double Relic_density::calc_cross_section(double T)
   }
   else
   {
-
-  double s=4*pow(m_s,2)+1;
-  cs_func func(T,m_s);
-  double ul=1e8;
-
-// first need to determine appropriate upper limit for integration range, such that function is non-zero there
-  if (func(s)==0){ return 0;}
+  // find ul such that f(ul)=1e-30
   
-  while (func(ul)==0)
-  {
-  ul=(ul-s)/2+s;
-  //cout << "ul = " << ul << " f = " << func(ul) << endl;
-  }
-   cout << "integrating from s to " << ul << "for T = " << T << endl;
+  double s=4*pow(m_s,2)+1;
+  cs_func f(T,m_s,lambda_hs);
+  double a=s*10.0;
+  double delta=1;
+  double fa=f(a);
+  double val=1e-30;
+  double fdelta=f(a+delta);
+  double diff=fa-fdelta;
+  double b;
+  
+  
+    if (diff<0)
+    {
+    
+    cout << " gradient is positive, going over the hill " << endl;
+    
+    while (diff<0)
+    {
+    a=a*10;
+    fa=f(a);
+    fdelta=f(a+delta);
+    diff=fa-fdelta;
+    }
+    }
+double bb;
+    if (fa>val)
+    {
+//      cout << " fa is too large, descending downhill " << endl;
+      if (f(a+delta)<val)
+      {
+      // desired point is between a and delta, so set b = a + delta
+      bb=a+delta;
+      }
+      else
+      {
+//        cout << "looking for f < val "<< endl;
+      // need to go beyond a+delta to find point
+      // here we will find a value such that f < val
+        double b=delta+a,fb=f(a+delta);
+        while (fb>val)  // find a and b around root
+        {
+        a=b;
+        b=b*10;
+        bb=b;
+//        cout << "attempt = " << b << " f = " << f(b) << endl;
+        fb=f(b);
+        }
+        
+      }
+    }
+    else
+    {
+//      cout << " fa is too small, going uphill" << endl;
+      if (f(a-delta)>val)
+      {
+      // desired point is between a and delta, so set b = a + delta
+      bb=a+delta;
+      }
+      else
+      {
+      // need to go below a-delta to find point
+      // but we our bounded below by s so just use this
+      bb=a;
+      a=s;
+      // now have lower (a) and upper (b) bound for x such that f(x)=val
+      }
+    }
+    b=bb;
+ //   cout << "root bounded between (a,b) = " << a << " " << b << endl;
+ //   cout << "root bounded between (f(a),f(b)) = " << f(a) << " " << f(b) << endl;
+  
+
+    fa=f(a);
+    double ft=val*1e10,m;
+    // now root find between a and b
+    while (abs(log10(ft)-log10(val))>5)
+    {
+      m=(b-a)/2+a;
+//      cout << " mid point = " << m << endl;
+      if (f(m)<val)
+      {
+      b=m;
+      }
+      else
+      {
+        a=m;
+      }
+      double fm=f(m);
+      if (fm!=0)
+      {
+      ft=fm;
+      }
+    }
+
+   double ul=m;
+  
+
+//   cout << "integrating from s to " << ul << " for T = " << T << endl;
   
   double result;
   
-  ul=112617;
-  
-  if (s<2*pow(Mh,2))  // split integral into two parts, one around the Higgs resonance and one for the tail
-  {
-  double mid_pt=2*pow(Mh,2);
-  cout << " (s, mid) = " << s << " " << mid_pt << endl;
-  
-  double int_lower=qtrap(func,s,mid_pt,1e-4);
-  double int_upper=qtrap(func,mid_pt,ul,1e-4);
-  result=int_lower+int_upper;
-  }
-  else
-  {
-  result=qtrap(func,s,ul,1e-4);
-  }
-  
+//  if (s<2*pow(Mh,2))  // split integral into two parts, one around the Higgs resonance and one for the tail
+//  {
+//  double mid_pt=2*pow(Mh,2);
+//  cout << " (s, mid) = " << s << " " << mid_pt << endl;
+//  
+//  double int_lower=qtrap(f,s,mid_pt,1e-4);
+//  double int_upper=qtrap(f,mid_pt,ul,1e-4);
+//  result=int_lower+int_upper;
+//  }
+//  else
+//  {
+//  result=qtrap(f,s,ul,1e-4);
+//  }
+   result=qtrap(f,s,ul,1e-4);
   
   return result;
   }
@@ -158,7 +245,7 @@ void Relic_density::thermal_average_make_interp(double T_lower, double T_upper,i
   {
   thermal_av[n]=calc_cross_section(T[n]);
   T[n+1]=T[n]+step;
-  cout << "T = " << T[n] << "thermal av = " << thermal_av[n] << endl;
+ // cout << "T = " << T[n] << "thermal av = " << thermal_av[n] << endl;
 
   }
   

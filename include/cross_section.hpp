@@ -22,16 +22,16 @@ class Cross_section
   private:
   double Mh;
 
-  double lambda_hs,v_0;
+  double v_0;
   double Pi=3.14;
   double M_Z=91, M_W=80 , alpha_s=0.1184, mt=173;
   public:
-  double m_s;
+  double m_s,lambda_hs;
   Cross_section (){}  // defualt constructor
-  Cross_section(double Ms)
+  Cross_section(double Ms,double Lam_hs)
   {
       m_s=Ms;
-      lambda_hs=0.1;
+      lambda_hs=Lam_hs;
       v_0=246;
       Mh=125.66;
    } //constructor
@@ -85,14 +85,14 @@ class Cross_section
 
 
 struct cs_func {
-cs_func(double T, double Ms) : T(T) , Ms(Ms) {}
+cs_func(double T, double Ms,double lambda_hs) : T(T) , Ms(Ms) , lambda_hs(lambda_hs) {}
 double operator()(double x) const {
-Cross_section cs(Ms);
+Cross_section cs(Ms,lambda_hs);
 return cs.cs_integral(x,T);
 }//cs_integral(x,T);}
 
 private:
-double T, Ms;
+double T, Ms, lambda_hs;
 };
 
 
@@ -111,10 +111,10 @@ class Relic_density
   double m_s;
   std::vector<double> T_m,thermal_av_m;
   Relic_density (){make_interp=0;}  // defualt constructor
-  Relic_density(double Ms)
+  Relic_density(double Ms,double Lam_hs)
   {
       m_s=Ms;
-      lambda_hs=0.1;
+      lambda_hs=Lam_hs;
       v_0=246;
       Mh=125.66;
       make_interp=0;
@@ -143,9 +143,9 @@ class Relic_density
 
 struct Z_func {
 
-Z_func(double Ms) : Ms(Ms) {use_interp=0;}
+Z_func(double Ms,double lambda_hs) : Ms(Ms), lambda_hs(lambda_hs) {use_interp=0;}
 
-Z_func(double Ms ,std::vector<double> T,std::vector<double> thermal_av) : Ms(Ms)
+Z_func(double Ms ,double lambda_hs ,std::vector<double> T,std::vector<double> thermal_av) : Ms(Ms),lambda_hs(lambda_hs)
 ,T_m(T), thermal_av_m(thermal_av) {use_interp=1;}
 
 double operator()(double x) {
@@ -161,7 +161,7 @@ cs = myfunc.interp(Ms/x);
 }
 else
 {
-Relic_density rd(Ms);
+Relic_density rd(Ms,lambda_hs);
 cs=rd.calc_cross_section(Ms/x);
 }
 
@@ -171,7 +171,7 @@ return pow(Pi/float(45),0.5)*((Ms*M_pl)/pow(x,2)) * (pow(g_eff,0.5))*cs;
 }//cs_integral(x,T);}
 
 private:
-double T, Ms;
+double T, Ms,lambda_hs;
 int use_interp;
 std::vector<double> T_m, thermal_av_m;
 };

@@ -20,7 +20,7 @@ class Figures
 private:
 Cross_section cross_section;
 Relic_density relic_density;
-double m_s;
+double m_s,lambda_hs;
 public:
 
 
@@ -29,6 +29,7 @@ Figures(Cross_section _cross_section, Relic_density _rd)
   cross_section=_cross_section;
   relic_density=_rd;
   m_s=cross_section.m_s;
+  lambda_hs=cross_section.lambda_hs;
 }
 
 

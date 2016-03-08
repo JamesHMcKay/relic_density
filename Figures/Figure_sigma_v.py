@@ -22,16 +22,16 @@ plt.plot(x,y2)
 
 
 
-#ul=1e6;
-#
-#fit=interpolate.interp1d(x,y,kind='linear')
-#
-#
-#plt.xlim([min(x),ul])
-#plt.ylim([fit(ul)/10,max(y)])
-#
-#plt.xlabel("$s$",fontsize=18)
-#plt.ylabel("$\sigma v_{rel}$",fontsize=18)
+ul=1e6;
+
+fit=interpolate.interp1d(x,y,kind='linear')
+
+
+plt.xlim([min(x),ul])
+plt.ylim([fit(ul)/10,max(y)])
+
+plt.xlabel("$s$",fontsize=18)
+plt.ylabel("$\sigma v_{rel}$",fontsize=18)
 
 
 plt.xscale('log')

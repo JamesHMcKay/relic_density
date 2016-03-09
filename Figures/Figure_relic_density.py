@@ -16,7 +16,7 @@ plt.figure()
 A=np.genfromtxt('../Figures/data/relic_density.txt',usecols=[0,1,2])
 lambda_hs=log10(A[:,0])
 ms=A[:,1]
-rd=log10(A[:,2]/0.11)
+rd=log10(A[:,2]/0.1199) # h^2\Sigma_DM from http://arxiv.org/pdf/1502.01589v2.pdf
 
 xi = linspace(min(ms), max(ms))
 yi = linspace(min(lambda_hs), max(lambda_hs))

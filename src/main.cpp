@@ -63,100 +63,60 @@ myfile.close();
 
 
 
-
-
-
-
-
-
-
-
-
-
-int main()
+int main(int argc, char* argv[])
 {
-double m_s=2000,lambda_hs=0.3;
-Cross_section cross_section(m_s,lambda_hs);
-Relic_density relic_density(m_s,lambda_hs);
+double lambda_hs=0.1,M_s=100;double param [2];
+
+std::string name [2]; int i=0;
+
+if (argc==1)
+{
+cout << "Please enter a data file in the format ./main input.txt " << endl;
+return 0;
+}
+else
+{
+std::ifstream input(argv[1]);
+std::string line;
 
 
-simple func(10);
-int m=30;
-//cout << "func = " << func(100) << endl;
-double val;
+while(getline(input, line)) {
+      if (!line.length() || line[0] == '#')
+         continue;
+      std::istringstream iss(line);
+      iss>> name[i] >> param[i];
+      i=i+1;
+   }
+}
 
-plot_rd();
+for (int n=0;n<i+1;n++)
+{
+if (name[n]=="lambda_hs")
+{
+lambda_hs=param[n];
+}
+if (name[n]=="M_s")
+{
+M_s=param[n];
+}
+}
 
-
-//Trapzd<simple> s(func,0,30);
-//for(int j=1;j<=m+1;j++) val=s.next();
-//cout << "integral = " << val << endl;
-// test interpolator
-
-
-//
-
-double s=4*pow(m_s,2), T_=0.0001;
-
-
-//cs_func func2(T_,m_s);
-
-//cout << "integral = " << qtrap(func2, s,40001.2,1e-5) << endl;
-
-
-
-
-
-//cout << "x_f = " << relic_density.x_f() << endl;
-
-
-//Z_func func_z(m_s);
-
-//double t;
-
-//cin >> t ;
-
-//cout << "cs integral = " << relic_density.calc_cross_section(t) << " at " << t <<  endl;
-//cs_func func3(t,m_s);
-//cout << "cs func at s = " << s+1 << " is " << func3(s+1) << endl;
-//cout << "cs func at 1.001 s = " << func3(1.001*s) << endl;
-
-//
-
-//cout << "true bessel = " << boost::math::cyl_bessel_k(2,100) << endl;
-//
-//cout << "asymptotic approximation bessel = " << cross_section.bessel_k_asymtotic(2,100) << endl;
-//
-//cout << "exp of log_asymptotic approximation bessel = " << exp(cross_section.log_bessel_k_asymtotic(2,100)) << endl;
-//
+cout << "lambda_hs = " << lambda_hs << endl;
+cout << "M_s = " << M_s << endl;
 
 
 
-//double x_f=23;//cross_section.x_f();
-
-//cout << "CALCULATING A_F " << endl;
-//cout << "A(x_f) = " << cross_section.A(x_f) << endl;
-
-
-
-//cout << "Generating figures" << endl;
 
 //Figures figures(cross_section, relic_density);
 //figures.plot_Z();
 
 //figures.plot_thermal_av();
 
-//cout<< "thermal average is = " << cross_section.Z(10000000000) << endl;
-
 //figures.plot_sigma_v(0.00045);
-
-//cout<< "integral is (thermal av) = " << relic_density.calc_cross_section(0.00045) << endl;
 
 //figures.plot_Z();
 
-double Y=relic_density.Y_today(relic_density.x_f());//cross_section.x_f());
-double rho_crit=1.05375e-5;// 3*(pow(H_0,2))/(8*Pi*G);  units: h^2 GeV /( c^2 cm^3)
-double s_0=2890;//(2*pow(Pi,2)/45)*g*pow(T,3);
-cout << "mass fraction = " <<  Y*m_s*s_0/rho_crit << endl;
+
+cout << "Oh2 = " << mass_frac(lambda_hs,M_s) << endl;
 
 }

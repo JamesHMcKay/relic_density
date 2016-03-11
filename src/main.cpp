@@ -3,7 +3,7 @@
 //#include "figures.hpp"
 #include "integrate.hpp"
 #include "data.hpp"
-#include "singletdm.hpp"
+#include "models.hpp"
 #include "rd.cpp"
 
 #include <vector>

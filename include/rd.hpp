@@ -3,7 +3,7 @@
 
 #include "interp.hpp"
 #include "integrate.hpp"
-#include "singletdm.hpp"
+#include "models.hpp"
 #include "data.hpp"
 
 #include <boost/math/special_functions/bessel.hpp>

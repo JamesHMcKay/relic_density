@@ -10,7 +10,7 @@
 
 #include "rd.hpp"
 #include "interp.hpp"
-#include "singletdm.hpp"
+#include "models.hpp"
 
 
 using namespace std;

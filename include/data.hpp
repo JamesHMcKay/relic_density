@@ -13,7 +13,7 @@
 
 #include <fstream>
 
-#include "singletdm.hpp"
+#include "models.hpp"
 
 using namespace std;
 

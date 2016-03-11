@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 2.8)
 project(main)
 message(status "${CMAKE_CURRENT_SOURCE_DIR}")
 include_directories(src include)
-set(HEADER_FILES include/rd.hpp include/interp.hpp include/figures.hpp include/integrate.hpp include/singletdm.hpp include/bessel.hpp include/data.hpp)
-set(SRC_FILES src/main.cpp src/singletdm.cpp src/interp.cpp src/rd.cpp src/figures.cpp)
+set(HEADER_FILES include/rd.hpp include/interp.hpp  include/integrate.hpp include/singletdm.hpp include/bessel.hpp include/data.hpp)
+set(SRC_FILES src/main.cpp src/singletdm.cpp src/interp.cpp src/rd.cpp )
 
 
 set(Boost_INCLUDE_DIR /usr/local/Cellar/boost/1.59.0/include)

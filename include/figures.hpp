@@ -2,6 +2,7 @@
 #define FIGURES_H
 
 #include "interp.hpp"
+#include "singletdm.hpp"
 #include "data.hpp"
 
 #include <vector>

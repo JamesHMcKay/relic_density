@@ -62,7 +62,7 @@ double lower=4*pow(m_s,2);
 double upper=1e15;//pow(1000,2)*1e40;
 double s,p;
 
-cs_func func(T,data);
+cs_func<SingletDM> func(T,data);
 
 for (int i=0;i<400;i++)
 {

@@ -13,11 +13,16 @@
 
 #include <fstream>
 
+#include "singletdm.hpp"
+
 using namespace std;
+
 
 struct Data
 {
   public:
+  
+  
   // default SM parameters
   // masses
   double M_h=125.66;

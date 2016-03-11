@@ -19,11 +19,13 @@
 
 using namespace std;
 
+
+template<typename Model>
 class Relic_density
 {
 
   private:
-
+  Model temp;
   int make_interp;
   Data data;
   public:
@@ -34,7 +36,7 @@ class Relic_density
       data=_data;
       make_interp=0;
    } //constructor
-//  double Z(double x);
+  double Z(double x);
   
   double Yeq(double x);
   
@@ -52,10 +54,9 @@ class Relic_density
   
   void thermal_average_make_interp(double T_lower, double T_upper,int pts);
 
-
 };
 
-
+template <class Model>
 struct Z_func {
 
 Z_func(Data data) : data(data) {use_interp=0;}
@@ -76,7 +77,7 @@ cs = myfunc.interp(data.M_s/x);
 }
 else
 {
-Relic_density rd(data);
+Relic_density<Model> rd(data);
 cs=rd.calc_cross_section(data.M_s/x);
 }
 return pow(data.Pi/float(45),0.5)*((data.M_s*data.M_pl)/pow(x,2)) * (pow(g_eff,0.5))*cs;

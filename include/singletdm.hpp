@@ -42,10 +42,11 @@ class SingletDM
   
 };
 
+template <class M>
 struct cs_func {
 cs_func(double T, Data data) : T(T) , data(data) {}
 double operator()(double x) const {
-SingletDM cs(data);
+M cs(data);
 return cs.cs_integral(x,T);
 }//cs_integral(x,T);}
 
@@ -53,6 +54,7 @@ private:
 double T;
 Data data;
 };
+
 
 
 #endif

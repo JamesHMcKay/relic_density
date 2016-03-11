@@ -1,8 +1,10 @@
 #include "rd.hpp"
 #include "interp.hpp"
-#include "figures.hpp"
+//#include "figures.hpp"
 #include "integrate.hpp"
 #include "data.hpp"
+#include "singletdm.hpp"
+#include "rd.cpp"
 
 #include <vector>
 #include <cmath>
@@ -17,7 +19,7 @@ using namespace std;
 
 double mass_frac(Data data)
 {
-Relic_density relic_density(data);
+Relic_density<SingletDM> relic_density(data);
 double Y=relic_density.Y_today(relic_density.x_f());
 double rho_crit=1.05375e-5;
 double s_0=2890;

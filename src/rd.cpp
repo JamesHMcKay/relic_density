@@ -8,7 +8,7 @@
 #include <boost/math/special_functions/bessel_prime.hpp>
 #include <fstream>
 
-#include "cross_section.hpp"
+#include "rd.hpp"
 #include "interp.hpp"
 
 using namespace std;
@@ -25,13 +25,13 @@ using namespace std;
 double Relic_density::Yeq(double x)
 {
 double h_eff=100;
-return boost::math::cyl_bessel_k(2,x)*(45/(4*pow(Pi,4)))*pow(x,2)/(h_eff);
+return boost::math::cyl_bessel_k(2,x)*(45/(4*pow(data.Pi,4)))*pow(x,2)/(h_eff);
 }
 
 double Relic_density::dYeq(double x)
 {
 double h_eff=100;
-return boost::math::cyl_bessel_k_prime(2,x)*(45/(4*pow(Pi,4)))*pow(x,2)/(h_eff)  +  (float(2)/x)*Yeq(x);
+return boost::math::cyl_bessel_k_prime(2,x)*(45/(4*pow(data.Pi,4)))*pow(x,2)/(h_eff)  +  (float(2)/x)*Yeq(x);
 }
 
 double Relic_density::hat(double func, double x)
@@ -46,7 +46,7 @@ double Relic_density::x_f()
 
 double deltaf=0.618;
 double x_star=15,x_prev=0;
-Z_func func(m_s,lambda_hs);
+Z_func func(data);
 
 
 
@@ -83,12 +83,12 @@ return result;
 double Relic_density::A(double x_f)
 {
   double x_upper=1e5, x_lower=x_f;
-  double T_lower=m_s/x_upper,T_upper=m_s/x_lower;
+  double T_lower=data.M_s/x_upper,T_upper=data.M_s/x_lower;
   
   
   thermal_average_make_interp(T_lower*0.9,T_upper*1.1,5);
 
-  Z_func func(m_s,lambda_hs,T_m,thermal_av_m);
+  Z_func func(data,T_m,thermal_av_m);
   
   double I=qtrap(func, x_lower,x_upper,1e-3);
   
@@ -114,17 +114,15 @@ double Relic_density::calc_cross_section(double T)
   {
   // find ul such that f(ul)=1e-30
   
-  double s=4*pow(m_s,2)+1;
-  cs_func f(T,m_s,lambda_hs);
+  double s=4*pow(data.M_s,2)+1;
+  cs_func f(T,data);
   double a=s*10.0;
   double delta=1;
   double fa=f(a);
   double val=1e-30;
   double fdelta=f(a+delta);
   double diff=fa-fdelta;
-  double b;
-  
-  
+  double b,bb=-1;
     if (diff<0)
     {
     
@@ -138,7 +136,7 @@ double Relic_density::calc_cross_section(double T)
     diff=fa-fdelta;
     }
     }
-double bb;
+
     if (fa>val)
     {
 //      cout << " fa is too large, descending downhill " << endl;
@@ -245,10 +243,7 @@ void Relic_density::thermal_average_make_interp(double T_lower, double T_upper,i
   {
   thermal_av[n]=calc_cross_section(T[n]);
   T[n+1]=T[n]+step;
- // cout << "T = " << T[n] << "thermal av = " << thermal_av[n] << endl;
-
   }
-  
   T_m=T;
   thermal_av_m=thermal_av;
   make_interp=1;

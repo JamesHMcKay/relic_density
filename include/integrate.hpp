@@ -11,7 +11,7 @@
 
 #include <fstream>
 
-#include "cross_section.hpp"
+#include "rd.hpp"
 
 using namespace std;
 

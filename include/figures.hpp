@@ -2,6 +2,7 @@
 #define FIGURES_H
 
 #include "interp.hpp"
+#include "data.hpp"
 
 #include <vector>
 #include <cmath>
@@ -11,25 +12,29 @@
 
 #include <fstream>
 
-#include "cross_section.hpp"
+#include "rd.hpp"
 
 using namespace std;
 
 class Figures
 {
 private:
-Cross_section cross_section;
+SingletDM cross_section;
 Relic_density relic_density;
 double m_s,lambda_hs;
+Data data;
 public:
 
 
-Figures(Cross_section _cross_section, Relic_density _rd)
+Figures(SingletDM _cross_section, Relic_density _rd,Data _data)
 {
   cross_section=_cross_section;
   relic_density=_rd;
-  m_s=cross_section.m_s;
-  lambda_hs=cross_section.lambda_hs;
+ // m_s=cross_section.m_s;
+ // lambda_hs=cross_section.lambda_hs;
+ m_s=_data.M_s;
+ lambda_hs=_data.Lam_hs;
+ data=_data;
 }
 
 

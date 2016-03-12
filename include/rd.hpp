@@ -25,16 +25,18 @@ class Relic_density
 {
 
   private:
-  Model temp;
   int make_interp;
   Data data;
+  bool fast_mode;
   public:
   std::vector<double> T_m,thermal_av_m;
   Relic_density (){make_interp=0;}  // defualt constructor
   Relic_density(Data _data)
   {
-      data=_data;
       make_interp=0;
+      fast_mode=_data.fast_mode;
+      Model model;
+      data = model.set_dm_mass(_data);
    } //constructor
   double Z(double x);
   
@@ -51,6 +53,10 @@ class Relic_density
   double A(double x_f);
   
   double calc_cross_section(double T);
+
+  double calc_cross_section_fast(double T);
+  
+  double calc_cross_section_slow(double T);
   
   void thermal_average_make_interp(double T_lower, double T_upper,int pts);
 
@@ -73,14 +79,14 @@ double g_eff=10,cs;   /// check this !!!
 if (use_interp==1)
 {
 Poly_interp myfunc(T_m,thermal_av_m,4);
-cs = myfunc.interp(data.M_s/x);
+cs = myfunc.interp(data.M_dm/x);
 }
 else
 {
 Relic_density<Model> rd(data);
-cs=rd.calc_cross_section(data.M_s/x);
+cs=rd.calc_cross_section(data.M_dm/x);
 }
-return pow(data.Pi/float(45),0.5)*((data.M_s*data.M_pl)/pow(x,2)) * (pow(g_eff,0.5))*cs;
+return pow(data.Pi/float(45),0.5)*((data.M_dm*data.M_pl)/pow(x,2)) * (pow(g_eff,0.5))*cs;
 
 }//cs_integral(x,T);}
 

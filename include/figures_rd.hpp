@@ -2,7 +2,7 @@
 #define FIGURES_H
 
 #include "interp.hpp"
-#include "singletdm.hpp"
+#include "models.hpp"
 #include "data.hpp"
 
 #include <vector>
@@ -17,20 +17,18 @@
 
 using namespace std;
 
-class Figures
+template <class Model>
+class Figures_RD
 {
 private:
-SingletDM cross_section;
-Relic_density relic_density;
+Relic_density<Model> relic_density;
 double m_s,lambda_hs;
 Data data;
 public:
 
-
-Figures(SingletDM _cross_section, Relic_density _rd,Data _data)
+Figures_RD(Data _data)
 {
-  cross_section=_cross_section;
-  relic_density=_rd;
+//  relic_density=_rd;
  // m_s=cross_section.m_s;
  // lambda_hs=cross_section.lambda_hs;
  m_s=_data.M_s;

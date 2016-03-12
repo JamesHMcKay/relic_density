@@ -15,7 +15,7 @@ using namespace std;
 ///  Cross section integral class functions //
 
 
-double SingletDM::cs_integral(double s, double T)
+double SingletDM_RD::cs_integral(double s, double T)
 {
 Bessel bessel;// class for asymptotic bessel function definitions
 double a= s*pow(s-4*pow(data.M_s,2),0.5)* sigma_v(s);
@@ -34,7 +34,7 @@ return exp( log (a/b)+ bessel.log_bessel_k_asymtotic(1,pow(s,0.5)/T)- 2 * bessel
 
 
 // vector bosons
-double SingletDM::sigma_v_VV(double s)
+double SingletDM_RD::sigma_v_VV(double s)
 {
 double result=0;
 double delta_W=1,delta_Z=0.5;
@@ -63,7 +63,7 @@ return result;
 }
 
 // fermions
-double SingletDM::sigma_v_ff(double s)
+double SingletDM_RD::sigma_v_ff(double s)
 {
 double result;
 if (pow(s,0.5)<2*data.M_t)
@@ -83,7 +83,7 @@ return result;
 
 
 // Higgs
-double SingletDM::sigma_v_hh(double s)
+double SingletDM_RD::sigma_v_hh(double s)
 {
 double result;
 double m_s=data.M_s,Mh=data.M_h;
@@ -120,7 +120,7 @@ return result;
 // total sigma_v
 // still need to add invisible contribution to propogator when ms < mh/2 (see comment on end of page 2 of Cline et al. 2013)
 
-double SingletDM::sigma_v(double s)
+double SingletDM_RD::sigma_v(double s)
 {
 double sigv;
 
@@ -142,7 +142,7 @@ return sigv;
 }
 
 
-double SingletDM::Dh2(double s)
+double SingletDM_RD::Dh2(double s)
 {
 return 1/(pow((s-pow(data.M_h,2)),2)+(pow(data.M_h,2))*pow(gamma_h(data.M_h),2));
 }
@@ -151,7 +151,7 @@ return 1/(pow((s-pow(data.M_h,2)),2)+(pow(data.M_h,2))*pow(gamma_h(data.M_h),2))
 
 
 
-double SingletDM::gamma_h(double x)
+double SingletDM_RD::gamma_h(double x)
 {
 std::vector<double> mh_input  ={90,100,110,120,130,140,150,180,200,250,300,400,500,600,800,1000};
 std::vector<double> gamma_input  ={2.2e-3,2.46e-3,2.82e-3,3.47e-3,4.87e-3,8.12e-3,1.73e-2,6.31e-1,1.43,4.04,8.43,29.2,68,123,304,647};

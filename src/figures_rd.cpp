@@ -10,18 +10,18 @@
 
 #include "rd.hpp"
 #include "interp.hpp"
-#include "figures.hpp"
+#include "figures_rd.hpp"
 
 using namespace std;
 
 
-
-void Figures::plot_thermal_av()
+template <class Model>
+void Figures_RD<Model>::plot_thermal_av()
 {
 //Cross_section cross_section(m_s);
 data.M_s=m_s;
 data.Lam_hs=lambda_hs;
-Relic_density relic_density(data);
+Relic_density<Model> relic_density(data);
 //plot integrand as a function of s
 ofstream myfile_integrand;
 myfile_integrand.open ("../Figures/data/thermal_av.txt");
@@ -35,7 +35,7 @@ double upper = 2;
 
 relic_density.thermal_average_make_interp(lower*0.9,upper*1.1,5);
 
-Relic_density relic_density2(data);
+Relic_density<Model> relic_density2(data);
 
 cout << "test value = " << relic_density.calc_cross_section(lower) << endl;
 
@@ -51,7 +51,8 @@ system("python ../Figures/Figure_thermal_av.py");
 
 }
 
-void Figures::plot_sigma_v(double T)
+template <class Model>
+void Figures_RD<Model>::plot_sigma_v(double T)
 {
 //Cross_section cross_section(m_s);
 //plot integrand as a function of s
@@ -62,13 +63,15 @@ double lower=4*pow(m_s,2);
 double upper=1e15;//pow(1000,2)*1e40;
 double s,p;
 
-cs_func<SingletDM> func(T,data);
+Model model;
+
+cs_func<Model> func(T,data);
 
 for (int i=0;i<400;i++)
 {
-p=(log10(upper)-log10(lower))/400*float(i);
+p=(log10(upper)-log10(lower))/400*float(i)+log10(lower);
 s=pow(10,p)+lower;
-myfile_integrand << s << " " << cross_section.cs_integral(s,T)<<" "<< func(s) << endl;
+myfile_integrand << s << " " << model.cs_integral(s,T)<<" "<< func(s) << endl;
 
 //myfile_integrand << s << " " << cross_section.sigma_v(s) <<" "<< cross_section.sigma_v(s) << endl;
 }
@@ -79,11 +82,12 @@ system("python ../Figures/Figure_sigma_v.py");
 }
 
 
-void Figures::plot_Z()
+template <class Model>
+void Figures_RD<Model>::plot_Z()
 {
 ofstream myfile_integrand;
 myfile_integrand.open ("../Figures/data/Z.txt");
-Z_func func_z(data);
+Z_func<Model> func_z(data);
 
 double x_upper=1e3, x_lower=20;
 double T_lower=m_s/x_upper,T_upper=m_s/x_lower;
@@ -91,12 +95,12 @@ double T_lower=m_s/x_upper,T_upper=m_s/x_lower;
 data.M_s=m_s;
 data.Lam_hs=lambda_hs;
 
-Relic_density rd(data);
+Relic_density<Model> rd(data);
 
 
 rd.thermal_average_make_interp(T_lower,T_upper,4);
 
-Z_func func_z2(data, rd.T_m, rd.thermal_av_m);
+Z_func<Model> func_z2(data, rd.T_m, rd.thermal_av_m);
 
 
 
@@ -113,7 +117,8 @@ myfile_integrand.close();
 system("python ../Figures/Figure_Z.py");
 }
 
-void Figures::gamma_h()
+template <class Model>
+void Figures_RD<Model>::gamma_h()
 {
 std::vector<double> x  ={90,100,110,120,130,140,150,180,200,250,300,400,500,600,800,1000};
 std::vector<double> y  ={2.2e-3,2.46e-3,2.82e-3,3.47e-3,4.87e-3,8.12e-3,1.73e-2,6.31e-1,1.43,4.04,8.43,29.2,68,123,304,647};

@@ -48,14 +48,14 @@ Z_func<Model> func(data);
 
 
 
-for (int i=0;i<10;i++)
+//for (int i=0;i<10;i++)
 
-while (abs(x_star-x_prev)>0.1)
+while (abs(x_star-x_prev)>0.001)
 {
 x_star=log( (deltaf*(2+deltaf)/(1+deltaf)) * (  func(x_star)* pow(hat(Yeq(x_star),x_star),2) )/ (hat(Yeq(x_star),x_star) -hat(Yeq(x_star)+dYeq(x_star),x_star) ));
 x_prev=x_star;
-//cout<< "x* is = " << x_star << endl;
-//cout<< "corresponing to T = " << m_s/x_star << endl;
+cout<< "x* is = " << x_star << endl;
+//cout<< "corresponing to T = " << M_dm/x_star << endl;
 }
 
 cout<< "x* is = " << x_star << endl;
@@ -80,7 +80,7 @@ template<typename Model>
 double Relic_density<Model>::A(double x_f)
 {
   double x_upper=1e5, x_lower=x_f;
-  double T_lower=data.M_s/x_upper,T_upper=data.M_s/x_lower;
+  double T_lower=data.M_dm/x_upper,T_upper=data.M_dm/x_lower;
   
   
   thermal_average_make_interp(T_lower*0.9,T_upper*1.1,5);
@@ -91,14 +91,39 @@ double Relic_density<Model>::A(double x_f)
   
   return I;
 
-//Z_func func(m_s);
+//Z_func func(M_dm);
 //
 //return x_f*func(x_f);
 
 }
 
+
+
+
 template<typename Model>
 double Relic_density<Model>::calc_cross_section(double T)
+{
+if (fast_mode)
+{
+return calc_cross_section_fast(T);
+}
+else
+{
+return calc_cross_section_slow(T);
+}
+}
+
+
+template<typename Model>
+double Relic_density<Model>::calc_cross_section_fast(double T)
+{
+Model model;
+return model.quick_cs(T);
+}
+
+
+template<typename Model>
+double Relic_density<Model>::calc_cross_section_slow(double T)
 {
   if (make_interp==1)
   {
@@ -111,7 +136,7 @@ double Relic_density<Model>::calc_cross_section(double T)
   {
   // find ul such that f(ul)=1e-30
   
-  double s=4*pow(data.M_s,2)+1;
+  double s=4*pow(data.M_dm,2)+1;
   cs_func<Model> f(T,data);
   double a=s*10.0;
   double delta=1;
@@ -205,8 +230,7 @@ double Relic_density<Model>::calc_cross_section(double T)
 
    double ul=m;
   
-
-//   cout << "integrating from s to " << ul << " for T = " << T << endl;
+// cout << "integrating from s to " << ul << " for T = " << T << endl;
   
   double result;
   

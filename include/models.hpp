@@ -14,13 +14,13 @@
 
 using namespace std;
 
-class SingletDM
+class SingletDM_RD
 {
   private:
   Data data;
   public:
-  SingletDM (){}  // defualt constructor
-  SingletDM(Data _data)
+  SingletDM_RD (){}  // defualt constructor
+  SingletDM_RD(Data _data)
   {
     data=_data;
    } //constructor
@@ -38,34 +38,62 @@ class SingletDM
   double cs_integral(double s, double T);
 
   double sigma_v(double s);
+  
+  double quick_cs(double T){return 1e-8;}//(1e-12)*(1e-28)*(3e10)*(10*10);};
+  
+  Data set_dm_mass(Data data){data.M_dm=data.M_s;return data;};
+  
+};
+
+class SingletDMZ3_RD
+{
+  private:
+  Data data;
+  public:
+  SingletDMZ3_RD (){}  // defualt constructor
+  SingletDMZ3_RD(Data _data)
+  {
+    data=_data;
+   } //constructor
+  
+  double gamma_h(double x);
+  
+  double Dh2(double s);
+  
+  double sigma_v_VV(double s);
+  
+  double sigma_v_ff(double s);
+  
+  double sigma_v_hh(double s);
+  
+  double cs_integral(double s, double T);
+
+  double sigma_v(double s);
+  
+  double quick_cs(double T){return (1e-12)*(1e-28)*(3e8);};
+
+  Data set_dm_mass(Data data){data.M_dm=data.M_s;return data;};
   
   
 };
 
-class SingletDMZ3
+
+class MDM_RD
 {
   private:
   Data data;
   public:
-  SingletDMZ3 (){}  // defualt constructor
-  SingletDMZ3(Data _data)
+  MDM_RD (){}  // defualt constructor
+  MDM_RD(Data _data)
   {
     data=_data;
    } //constructor
   
-  double gamma_h(double x);
-  
-  double Dh2(double s);
-  
-  double sigma_v_VV(double s);
-  
-  double sigma_v_ff(double s);
-  
-  double sigma_v_hh(double s);
+  double quick_cs(double T);
   
   double cs_integral(double s, double T);
 
-  double sigma_v(double s);
+  Data set_dm_mass(Data data){data.M_dm=data.M_chi;return data;};
   
   
 };

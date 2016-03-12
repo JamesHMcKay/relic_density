@@ -1,10 +1,11 @@
 #include "rd.hpp"
 #include "interp.hpp"
-//#include "figures.hpp"
+#include "figures_rd.hpp"
 #include "integrate.hpp"
 #include "data.hpp"
 #include "models.hpp"
 #include "rd.cpp"
+#include "figures_rd.cpp"
 
 #include <vector>
 #include <cmath>
@@ -19,7 +20,7 @@ using namespace std;
 
 double mass_frac(Data data)
 {
-Relic_density<SingletDM> relic_density(data);
+Relic_density<MDM_RD> relic_density(data);
 double Y=relic_density.Y_today(relic_density.x_f());
 double rho_crit=1.05375e-5;
 double s_0=2890;
@@ -71,12 +72,15 @@ int main(int argc, char* argv[])
 
 Data data(argc,argv);
 
-//Figures figures(cross_section, relic_density,data);
+cout << "fast mode = " << data.fast_mode << endl;
+
+
+//Figures_RD<MDM_RD> figures(data);
 //figures.plot_Z();
 
 //figures.plot_thermal_av();
 
-//figures.plot_sigma_v(0.00045);
+//figures.plot_sigma_v(10);
 
 //figures.plot_Z();
 

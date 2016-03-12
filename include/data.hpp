@@ -32,11 +32,16 @@ struct Data
   //double Lam_h;
   //double mu_h;
   
-  // constants
-  double Pi=3.14159;
+  // other constants/parameters
+  double Pi=3.14159265359;
   double v0=246;
   double alpha_s=0.1184;
   double M_pl=1.2e19;
+  
+  // SM couplings
+  
+  double g1=0.65;
+  double g2=0.46;
   
   // BSM parameters
   
@@ -44,6 +49,13 @@ struct Data
   double Lam_s=0;
   
   double M_s=100;
+  
+  double M_chi=1000; // MDM degenerate mass
+  
+  double M_dm; // place holder for dm mass during rd calculations
+  
+  // rd calc parameters
+  bool fast_mode = false;
   
   // constructor
   Data (){};
@@ -95,7 +107,23 @@ struct Data
   {
   M_z=param[n];
   }
-
+  if (name[n]=="M_chi")
+  {
+  M_chi=param[n];
+  }
+  if (name[n]=="g1")
+  {
+  g1=param[n];
+  }
+  if (name[n]=="g2")
+  {
+  g2=param[n];
+  }
+  
+  if (name[n]=="fast_mode")
+  {
+  fast_mode=param[n];
+  }
 
   }
   }

@@ -29,7 +29,7 @@ template<class T>
 struct RK4 {
 T &func;
 double xi, xf, yi;
-
+double tol;
 RK4() {}; // constructor
 RK4(T &funcc, const double xii, const double xff, const double yii ) :
 func ( funcc) , xi(xii) , xf(xff), yi(yii) {}
@@ -49,17 +49,17 @@ double k4 = h* func(x+h,  Y+k3 ) ;
 return Y + 0.166666667 * (k1+2*k2+2*k3+k4);
 }
 
-double solve_RK4()
+double solve_RK4(double rk_tol=1e-8)
 {
 ofstream myfile;
-myfile.open ("../Figures/data/RK4.txt");
+myfile.open ("../Figures/data/rK4.txt");
 // the ODE to solve is dY/dx = F(x,Y) where F(Y,x) = Z(x) * (Y_eq^2(x)-Y^2(x))
-double tol=1e-6;
 double x = xi;
 double Y=yi;
 double h=0.5;
 double k1,k2,k3,k4;
 double Yf;
+tol=rk_tol;
 double Y_1=Y;
 while ( x < xf )
 {
@@ -87,15 +87,20 @@ h=h*2;
 double error = (Y_2 - Y_1);
 
 
+if (error==0)
+{
+h=h*100;
+}
+else
+{
 h = 0.9 * (h) * pow(tol / abs(error),0.2);  // multiply h by two since we halved it above
-
-cout << "error = " << error << " h = " << h << endl;
+}
+//cout << "error = " << error << " h = " << h << endl;
 
 if (abs(error)< tol)
 {
 //// step successful, move onto next point
 //cout << "step successful" << Y << endl;
-
 Y=Y_2+error/15.0;
 myfile << x << " " << Y << " " << Y_1 << endl;
 // leave x as is, it's already at the next point

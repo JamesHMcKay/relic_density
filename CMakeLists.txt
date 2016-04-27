@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 project(main)
 message(status "${CMAKE_CURRENT_SOURCE_DIR}")
 include_directories(src include)
-set(HEADER_FILES include/rd.hpp include/interp.hpp  include/integrate.hpp include/models.hpp include/bessel.hpp include/data.hpp include/figures_rd.hpp)
+set(HEADER_FILES include/rd.hpp include/interp.hpp  include/integrate.hpp include/models.hpp include/bessel.hpp include/data.hpp include/figures_rd.hpp include/RK4.hpp)
 set(SRC_FILES src/main.cpp src/singletdm.cpp src/singletdmz3.cpp src/interp.cpp src/rd.cpp src/figures_rd.cpp src/mdm.cpp)
 
 

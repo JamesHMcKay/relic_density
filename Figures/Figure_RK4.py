@@ -12,7 +12,7 @@ plt.figure()
 
 
 
-A=np.genfromtxt('../Figures/data/Rk4.txt',usecols=[0,1,2])
+A=np.genfromtxt('../Figures/data/rk4.txt',usecols=[0,1,2])
 x=A[:,0]
 y=A[:,1]
 y1=A[:,2]

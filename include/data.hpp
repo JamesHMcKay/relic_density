@@ -26,7 +26,7 @@ struct Data
   // default SM parameters
   // masses
   double M_h=125.66;
-  double M_z=91;
+  double M_z=91.1876;
   double M_w=80;
   double M_t=173.15;
   //double Lam_h;
@@ -56,6 +56,26 @@ struct Data
   
   // rd calc parameters
   bool fast_mode = false;
+  int method = 1;
+  double rk_tol=1e-6;
+  
+  
+  // non constant variables (maybe move everything below here to its own non const struct, and leave this const)
+  
+  double alpha = 0; // semi-annihilation rate
+  
+  // FlexibleSUSY options
+  
+  int threshold_corrections;
+  int beta_loop_order;
+  int pole_mass_loop_order;
+  
+  
+  // saved results
+  
+  double non_perturb_scale;
+  double min_lambda, Lambda_B;
+  
   
   // constructor
   Data (){};
@@ -124,18 +144,19 @@ struct Data
   {
   fast_mode=param[n];
   }
+  
+  if (name[n]=="method")
+  {
+  method=param[n];
+  }
+  
+  if (name[n]=="rk_tol")
+  {
+  rk_tol=param[n];
+  }
 
   }
   }
-  
-  
-  
-  
-  
-  
-  
-  
-  
   
   
 };

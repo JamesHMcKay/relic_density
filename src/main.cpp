@@ -6,6 +6,7 @@
 #include "models.hpp"
 #include "rd.cpp"
 #include "figures_rd.cpp"
+#include "RK4.hpp"
 
 #include <vector>
 #include <cmath>
@@ -20,9 +21,9 @@ using namespace std;
 
 double mass_frac(Data data)
 {
-Relic_density<MDM_RD> relic_density(data);
-double Y=relic_density.Y_today(relic_density.x_f());
-double rho_crit=1.05375e-5;
+Relic_density<SingletDM_RD> relic_density(data);
+double Y = relic_density.Y_today(relic_density.x_f());
+double rho_crit = 1.05375e-5;
 double s_0=2890;
 return  Y*data.M_s*s_0/rho_crit;
 }
@@ -32,7 +33,8 @@ return  Y*data.M_s*s_0/rho_crit;
 
 void plot_rd()
 {
-int x_pts=20,y_pts=20;
+int pts=10;
+int x_pts=pts,y_pts=pts;
 double m_lower=50, m_upper=70;
 double lam_lower_log=-4, lam_upper_log=0;
 Data data;
@@ -45,11 +47,11 @@ double lam_step= (lam_upper_log-lam_lower_log)/y_pts;
 
 double m_step= (m_upper-m_lower)/x_pts;
 
-for (int i=0; i<20 ;i++)
+for (int i=0; i<pts ;i++)
 {
  data.Lam_hs=pow(10,-lam_step*float(i));
  
-  for (int j=0; j<20 ; j++)
+  for (int j=0; j<pts ; j++)
   {
    data.M_s=m_step*float(j)+m_lower;
    
@@ -72,8 +74,7 @@ int main(int argc, char* argv[])
 
 Data data(argc,argv);
 
-cout << "fast mode = " << data.fast_mode << endl;
-
+//plot_rd();
 
 //Figures_RD<MDM_RD> figures(data);
 //figures.plot_Z();
@@ -84,6 +85,15 @@ cout << "fast mode = " << data.fast_mode << endl;
 
 //figures.plot_Z();
 
-cout << "Oh2 = " << mass_frac(data) << endl;
+data.method=0;
+cout << "Oh2 (method 0) = " << mass_frac(data) << endl;
+data.method=1;
+cout << "Oh2 (method 1) = " << mass_frac(data) << endl;
 
+
+
+// test the RK4 solver with simple test function
+//simple_DE F(3.0);
+//RK4<simple_DE> rk(F,1.0,20.0,2.0);
+//cout << "solution is = " << rk.solve_RK4() << endl;
 }

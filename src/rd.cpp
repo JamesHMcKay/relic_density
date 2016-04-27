@@ -11,6 +11,7 @@
 #include "rd.hpp"
 #include "interp.hpp"
 #include "models.hpp"
+#include "RK4.hpp"
 
 
 using namespace std;
@@ -54,11 +55,9 @@ while (abs(x_star-x_prev)>0.001)
 {
 x_star=log( (deltaf*(2+deltaf)/(1+deltaf)) * (  func(x_star)* pow(hat(Yeq(x_star),x_star),2) )/ (hat(Yeq(x_star),x_star) -hat(Yeq(x_star)+dYeq(x_star),x_star) ));
 x_prev=x_star;
-cout<< "x* is = " << x_star << endl;
-//cout<< "corresponing to T = " << M_dm/x_star << endl;
 }
 
-cout<< "x* is = " << x_star << endl;
+//cout<< "x* is = " << x_star << endl;
 
 return x_star;
 }
@@ -68,10 +67,16 @@ return x_star;
 template<typename Model>
 double Relic_density<Model>::Y_today(double x_f)
 {
-double Y_f=(1+0.618)*Yeq(x_f);
+double Y_f=(1+0.618)*Yeq(x_f), result=0;
 
-
-double result=Y_f/(1+Y_f*A(x_f));
+if (method==1)
+{
+result=Y_f/(1+Y_f*A(x_f));
+}
+else
+{
+result = solve_boltzman_Y_today(x_f);
+}
 
 return result;
 }
@@ -234,9 +239,9 @@ double Relic_density<Model>::calc_cross_section_slow(double T)
   
   double result;
   
-//  if (s<2*pow(Mh,2))  // split integral into two parts, one around the Higgs resonance and one for the tail
+//  if (s<2*pow(data.M_h,2))  // split integral into two parts, one around the Higgs resonance and one for the tail
 //  {
-//  double mid_pt=2*pow(Mh,2);
+//  double mid_pt=s+(ul-s)/2;//2*pow(data.M_h,2);
 //  cout << " (s, mid) = " << s << " " << mid_pt << endl;
 //  
 //  double int_lower=qtrap(f,s,mid_pt,1e-4);
@@ -247,7 +252,7 @@ double Relic_density<Model>::calc_cross_section_slow(double T)
 //  {
 //  result=qtrap(f,s,ul,1e-4);
 //  }
-   result=qtrap(f,s,ul,1e-4);
+  result=qtrap(f,s,ul,1e-4);
   
   return result;
   }
@@ -269,5 +274,44 @@ void Relic_density<Model>::thermal_average_make_interp(double T_lower, double T_
   thermal_av_m=thermal_av;
   make_interp=1;
 }
+
+
+template<typename Model>
+double Relic_density<Model>::solve_boltzman_Y_today(double x_f)
+{
+// use RK4 method to solve Boltzman equation from intial condition at x_f
+// convergence is achieved for sufficiently large x such that Y is constant at Y=Y_today
+
+
+double x_upper=1e5, x_lower=x_f;
+double T_lower=data.M_dm/x_upper,T_upper=data.M_dm/x_lower;
+
+
+thermal_average_make_interp(T_lower*0.9,T_upper*1.1,5);
+
+Boltz_func<Model> F(data,T_m,thermal_av_m);
+
+
+double Yf = (1+0.618)*Yeq(x_f); // Y_f
+
+RK4<Boltz_func<Model>> rk(F,x_f,x_upper,Yf);
+
+return rk.solve_RK4(data.rk_tol);
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

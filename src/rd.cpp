@@ -145,7 +145,18 @@ double Relic_density<Model>::calc_cross_section_slow(double T)
   cs_func<Model> f(T,data);
   double a=s*10.0;
   double delta=1;
-  double fa=f(a);
+  double fa;
+  try{
+  f(s);
+  }
+  catch (const char* msg)
+  {
+  cout << "catch 1" << endl;
+  throw "invalid_pt";
+  return 0;
+  }
+  fa=f(a);
+  
   double val=1e-30;
   double fdelta=f(a+delta);
   double diff=fa-fdelta;
@@ -153,7 +164,7 @@ double Relic_density<Model>::calc_cross_section_slow(double T)
     if (diff<0)
     {
     
-    cout << " gradient is positive, going over the hill " << endl;
+    cout << " gradient is positive " << endl;
     
     while (diff<0)
     {
@@ -267,7 +278,15 @@ void Relic_density<Model>::thermal_average_make_interp(double T_lower, double T_
   T[0]=T_lower;
   for (int n=0;n<pts;n++)
   {
+  try
+  {
   thermal_av[n]=calc_cross_section(T[n]);
+  }
+  catch (const char* msg)
+  {
+  cout << "catch 2" << endl;
+  thermal_av[n]=0;
+  }
   T[n+1]=T[n]+step;
   }
   T_m=T;

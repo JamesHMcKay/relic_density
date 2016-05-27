@@ -7,6 +7,7 @@
 #include "rd.cpp"
 #include "figures_rd.cpp"
 #include "RK4.hpp"
+#include "mcmc.hpp"
 
 #include <vector>
 #include <cmath>
@@ -21,8 +22,17 @@ using namespace std;
 
 double mass_frac(Data data)
 {
+double Y;
 Relic_density<SingletDM_RD> relic_density(data);
-double Y = relic_density.Y_today(relic_density.x_f());
+try
+{
+Y = relic_density.Y_today(relic_density.x_f());
+}
+catch (const char* msg)
+{
+cout << msg << endl;
+return 0;
+}
 double rho_crit = 1.05375e-5;
 double s_0=2890;
 return  Y*data.M_s*s_0/rho_crit;
@@ -85,10 +95,16 @@ Data data(argc,argv);
 
 //figures.plot_Z();
 
-data.method=0;
+//data.method=0;
 cout << "Oh2 (method 0) = " << mass_frac(data) << endl;
-data.method=1;
-cout << "Oh2 (method 1) = " << mass_frac(data) << endl;
+//data.method=1;
+//cout << "Oh2 (method 1) = " << mass_frac(data) << endl;
+
+// test mcmc scanner
+
+MCMC mcmc(data);
+
+mcmc.scanner();
 
 
 

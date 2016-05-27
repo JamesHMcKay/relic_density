@@ -154,6 +154,11 @@ struct Data
   {
   rk_tol=param[n];
   }
+  
+  if (name[n]=="alpha")
+  {
+  alpha=param[n];
+  }
 
   }
   }

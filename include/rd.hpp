@@ -125,7 +125,7 @@ return Zx * ( pow(rd.Yeq(x),2) - pow(Y,2) );
 }
 else
 {
-return Zx * ( (1-data.alpha)*pow(rd.Yeq(x),2) + data.alpha*Y*Yeq - pow(Y,2) );
+return Zx * ( (1-data.alpha)*pow(rd.Yeq(x),2) + data.alpha*Y*rd.Yeq(x) - pow(Y,2) );
 }
 }
 

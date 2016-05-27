@@ -103,8 +103,17 @@ template <class M>
 struct cs_func {
 cs_func(double T, Data data) : T(T) , data(data) {}
 double operator()(double x) const {
-M cs(data);
-return cs.cs_integral(x,T);
+M cs(data);double val;
+try{
+val = cs.cs_integral(x,T);
+return val;
+}
+catch (const char* msg)
+{
+cout << "catch 3" << endl;
+throw "invalid_pt";
+return 0;
+}
 }//cs_integral(x,T);}
 
 private:

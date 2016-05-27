@@ -136,6 +136,8 @@ else
 {
 sigv=0;
 cout<< "requested s value is too low = " << s << endl;
+//invalid_pt = true;
+throw "invalid_pt";
 }
 
 return sigv;
